@@ -10,6 +10,7 @@ description = "An utility to trim NDS ROMs."
 
 [dependencies]
 bincode = "1.3.3"
+clap = { version = "4.3.0", features = ["derive"] }
 serde = { version = "1.0.162", features = ["serde_derive"] }
 serde_arrays = "0.1.0"
 

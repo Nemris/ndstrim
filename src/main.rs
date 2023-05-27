@@ -1,19 +1,16 @@
-mod config;
+mod cli;
 mod crc;
 mod nds;
 
-use std::process;
+use clap::Parser;
 
-use config::Config;
+use cli::Cli;
 use nds::NdsFile;
 
 fn main() {
-    let config = Config::new().unwrap_or_else(|e| {
-        eprintln!("{}", e);
-        process::exit(1);
-    });
+    let cli = Cli::parse();
 
-    for file in config.files.iter() {
+    for file in cli.files.iter() {
         let mut ndsfile = match NdsFile::open(file) {
             Ok(f) => f,
             Err(e) => {
