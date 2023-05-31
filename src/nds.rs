@@ -104,6 +104,9 @@ impl NdsFile {
 
         let file_size = handle.metadata()?.len();
         let trimmed_size = Self::compute_trimmed_size(&mut handle, &header)?;
+        if file_size <= trimmed_size {
+            return Err(Error::AlreadyTrimmed);
+        }
 
         Ok(Self {
             handle,
@@ -144,9 +147,6 @@ impl NdsFile {
     }
 
     pub fn trim(&mut self) -> Result<()> {
-        if self.file_size <= self.trimmed_size {
-            return Err(Error::AlreadyTrimmed);
-        }
         self.handle.set_len(self.trimmed_size)?;
         Ok(())
     }

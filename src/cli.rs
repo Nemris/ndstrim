@@ -8,4 +8,8 @@ pub struct Cli {
     /// ROM files to trim
     #[arg(required = true)]
     pub files: Vec<PathBuf>,
+
+    /// Simulate execution, don't trim
+    #[arg(short, long)]
+    pub simulate: bool,
 }

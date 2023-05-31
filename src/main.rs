@@ -19,10 +19,12 @@ fn main() {
             }
         };
 
-        if let Err(e) = ndsfile.trim() {
-            eprintln!("'{}': {}", file.display(), e);
-            continue;
-        };
+        if !cli.simulate {
+            if let Err(e) = ndsfile.trim() {
+                eprintln!("'{}': {}", file.display(), e);
+                continue;
+            };
+        }
 
         println!(
             "'{}': size reduced from {} to {}",
