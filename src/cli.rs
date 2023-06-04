@@ -12,4 +12,12 @@ pub struct Cli {
     /// Simulate execution, don't trim
     #[arg(short, long)]
     pub simulate: bool,
+
+    /// Extension for trimmed files
+    #[arg(short, long, default_value_t = String::from("trim.nds"))]
+    pub extension: String,
+
+    /// Trim files in-place
+    #[arg(short, long)]
+    pub inplace: bool,
 }

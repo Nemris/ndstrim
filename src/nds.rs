@@ -151,6 +151,13 @@ impl NdsFile {
         Ok(())
     }
 
+    pub fn trim_with_name(&mut self, dest: &Path) -> Result<()> {
+        let mut out = File::create(dest)?;
+        self.handle.seek(SeekFrom::Start(0))?;
+        io::copy(&mut self.handle.by_ref().take(self.trimmed_size), &mut out)?;
+        Ok(())
+    }
+
     pub fn file_size(&self) -> u64 {
         self.file_size
     }
