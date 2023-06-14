@@ -1,5 +1,7 @@
 //! Utility to trim Nintendo DS(i) ROMs.
 
+#![warn(clippy::pedantic)]
+
 mod cli;
 mod crc;
 mod nds;

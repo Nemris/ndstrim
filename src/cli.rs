@@ -1,5 +1,7 @@
 //! Structs to handle command-line argument parsing.
 
+#![warn(clippy::pedantic)]
+
 use std::path::PathBuf;
 
 use clap::Parser;

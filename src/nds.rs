@@ -1,5 +1,7 @@
 //! Structs and methods for working with Nintendo DS(i) ROMs.
 
+#![warn(clippy::pedantic)]
+
 use std::fmt;
 use std::fs::File;
 use std::io::{self, ErrorKind, Read, Seek, SeekFrom};

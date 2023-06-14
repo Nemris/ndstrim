@@ -1,5 +1,7 @@
 //! Functions to handle Nintendo DS CRC-16 checksums.
 
+#![warn(clippy::pedantic)]
+
 /// Computes the CRC-16 of `data`.
 ///
 /// Adapted from
