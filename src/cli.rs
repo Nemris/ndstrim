@@ -1,7 +1,10 @@
+//! Structs to handle command-line argument parsing.
+
 use std::path::PathBuf;
 
 use clap::Parser;
 
+/// Command-line arguments.
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct Cli {

@@ -1,3 +1,5 @@
+//! Structs and methods for working with Nintendo DS(i) ROMs.
+
 use std::fmt;
 use std::fs::File;
 use std::io::{self, ErrorKind, Read, Seek, SeekFrom};
@@ -11,11 +13,16 @@ use crate::crc;
 
 type Result<T> = result::Result<T, Error>;
 
+/// A list of errors that may originate in this module.
 #[derive(Debug)]
 pub enum Error {
+    /// An error occurred during I/O operations.
     Io(io::Error),
+    /// Deserializing binary data failed.
     Deserialization(bincode::Error),
+    /// The header in the NDS file is malformed.
     BadHeader,
+    /// The NDS file is already trimmed.
     AlreadyTrimmed,
 }
 
@@ -42,6 +49,7 @@ impl From<bincode::Error> for Error {
     }
 }
 
+/// The header of an NDS file.
 #[derive(Deserialize, PartialEq)]
 struct NtrTwlHeader {
     title: [u8; 12],
@@ -68,7 +76,9 @@ struct NtrTwlHeader {
     ignored4: [u8; 3564],
 }
 
+/// An NDS ROM header.
 impl NtrTwlHeader {
+    /// Loads a header from an open NDS ROM and verifies it.
     fn from_file(f: &mut File) -> Result<Self> {
         let mut buf = vec![0; mem::size_of::<Self>()];
         f.read_exact(&mut buf)?;
@@ -82,22 +92,39 @@ impl NtrTwlHeader {
         Ok(header)
     }
 
+    /// Verifies `self`.
     fn is_logo_valid(&self) -> bool {
         crc::checksum(&self.nintendo_logo) == 0xcf56
     }
 
+    /// Checks whether `self` belongs to an NTR-only ROM.
     fn is_ntr_only(&self) -> bool {
         self.unitcode == 0x00
     }
 }
 
+/// An NDS file.
 pub struct NdsFile {
+    /// A handle to the open file.
     handle: File,
+    /// The file's on-disk size.
     file_size: u64,
+    /// The size of the ROM data.
     trimmed_size: u64,
 }
 
 impl NdsFile {
+    /// Opens an NDS file for reading and writing.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::path::PathBuf;
+    /// use nds::NdsFile;
+    ///
+    /// let path = PathBuf::from("foo.nds");
+    /// let ndsfile = NdsFile::open(&path)?;
+    /// ```
     pub fn open(path: &Path) -> Result<Self> {
         let mut handle = File::options().read(true).write(true).open(path)?;
         let header = NtrTwlHeader::from_file(&mut handle)?;
@@ -115,6 +142,9 @@ impl NdsFile {
         })
     }
 
+    /// Checks whether the ROM contains RSA magic bytes.
+    ///
+    /// This is only relevant in certain ROMs, e.g. Mario Kart, for Download Play functionality.
     fn has_cert(handle: &mut File, offset: u64) -> io::Result<bool> {
         const RSA_MAGIC: [u8; 2] = [0x61, 0x63]; // Equals "ac".
 
@@ -125,6 +155,11 @@ impl NdsFile {
         Ok(buf == RSA_MAGIC)
     }
 
+    /// Computes the size of the ROM contents.
+    ///
+    /// Generally, this matches the size reported in the header, unless the ROM contains a RSA
+    /// certificate.
+    /// In such a case, the size should include 0x88 more bytes to preserve Download Play.
     fn compute_trimmed_size(handle: &mut File, header: &NtrTwlHeader) -> Result<u64> {
         const RSA_SIZE: u64 = 0x88;
 
@@ -146,11 +181,38 @@ impl NdsFile {
         Ok(trimsize)
     }
 
+    /// Trims `self` in-place. This is irreversible.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::path::PathBuf;
+    /// use nds::NdsFile;
+    ///
+    /// let path = PathBuf::from("foo.nds");
+    /// let ndsfile = NdsFile::open(&path)?;
+    ///
+    /// ndsfile.trim()?;
+    /// ```
     pub fn trim(&mut self) -> Result<()> {
         self.handle.set_len(self.trimmed_size)?;
         Ok(())
     }
 
+    /// Copies `self`'s data into `dest`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::path::PathBuf;
+    /// use nds::NdsFile;
+    ///
+    /// let src = PathBuf::from("foo.nds");
+    /// let dest = PathBuf::from("bar.nds");
+    /// let ndsfile = NdsFile::open(&src)?;
+    ///
+    /// ndsfile.trim_with_name(&dest)?;
+    /// ```
     pub fn trim_with_name(&mut self, dest: &Path) -> Result<()> {
         let mut out = File::create(dest)?;
         self.handle.seek(SeekFrom::Start(0))?;
@@ -158,10 +220,12 @@ impl NdsFile {
         Ok(())
     }
 
+    /// Returns `self`'s on-disk file size.
     pub fn file_size(&self) -> u64 {
         self.file_size
     }
 
+    /// Returns `self`'s content size.
     pub fn trimmed_size(&self) -> u64 {
         self.trimmed_size
     }

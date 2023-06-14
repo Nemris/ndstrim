@@ -1,3 +1,5 @@
+//! Utility to trim Nintendo DS(i) ROMs.
+
 mod cli;
 mod crc;
 mod nds;
