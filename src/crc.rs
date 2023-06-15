@@ -20,7 +20,7 @@ pub fn checksum(data: &[u8]) -> u16 {
 
     let mut crc = 0xffff;
     for byte in data {
-        crc ^= *byte as u16;
+        crc ^= u16::from(*byte);
         for _ in 0..8 {
             let carry = (crc & 0x1) > 0;
             crc >>= 1;

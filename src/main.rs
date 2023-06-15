@@ -14,7 +14,7 @@ use nds::NdsFile;
 fn main() {
     let cli = Cli::parse();
 
-    for src in cli.files.iter() {
+    for src in &cli.files {
         let dest = if cli.inplace {
             src.clone()
         } else {

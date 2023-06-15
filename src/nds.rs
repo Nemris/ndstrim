@@ -31,8 +31,8 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Io(e) => write!(f, "{}", e),
-            Error::Deserialization(e) => write!(f, "{}", e),
+            Error::Io(e) => write!(f, "{e}"),
+            Error::Deserialization(e) => write!(f, "{e}"),
             Error::BadHeader => write!(f, "invalid header"),
             Error::AlreadyTrimmed => write!(f, "already trimmed"),
         }
@@ -106,6 +106,7 @@ impl NtrTwlHeader {
 }
 
 /// An NDS file.
+#[allow(clippy::module_name_repetitions)]
 pub struct NdsFile {
     /// A handle to the open file.
     handle: File,
