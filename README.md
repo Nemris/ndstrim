@@ -1,7 +1,7 @@
 # ndstrim
 
-`ndstrim` is a trimmer for Nintendo DS(i) ROMs, created as a project to familiarize myself with
-Rust.
+`ndstrim` is a program to trim the excess padding space found in Nintendo DS(i) ROMs, created as a
+project to familiarize myself with Rust.
 
 It takes into account whether a game bundles a RSA certificate in order for Download Play
 functionality to work, and preserves it while trimming the excess space from the ROM file.
@@ -10,15 +10,44 @@ functionality to work, and preserves it while trimming the excess space from the
 
 ## Usage
 
+### Standard
+
 `ndstrim` can trim any amount of files in a single run. To execute it, use:
 
 ```bash
 ndstrim foo.nds bar.nds baz.nds
 ```
 
-Alternatively, simply launch it without arguments for a small usage message.
+This will produce three files called `foo.trim.nds`, `bar.trim.nds` and `baz.trim.nds` in
+the same directory as the original ROM files.
 
-**For the time being, the files are trimmed in-place. Prior backups are recommended.**
+You can optionally provide a custom extension to use in place of `trim.nds` by passing the `-e`
+flag. Ensure that the extension you provide contains no leading dot.
+
+### In-place
+
+If you don't care about preserving the original ROMs, you can run:
+
+```bash
+ndstrim -i foo.nds bar.nds baz.nds
+```
+
+This will trim the files in-place, and **is irreversible**.
+
+### Simulated
+
+If you want to check what `ndstrim` would do, you can use:
+
+```bash
+ndstrim -s foo.nds bar.nds baz.nds
+```
+
+This option can be combined with `-i`.
+
+### Help
+
+Launching `ndstrim` without arguments will display a brief usage message, but you can get a more
+helpful one by passing the `-h` flag.
 
 -----
 
