@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1 - 2023-06-19
+### Added
+ * Prebuilt releases are now provided for Linux, Windows and macOS.
+
+### Changed
+ * No changes to the code.
+
 ## 0.2.0 - 2023-06-18
 ### Added
  * Possibility to simulate execution.
