@@ -21,7 +21,7 @@ jobs:
       with:
         RUSTTARGET: ${{ matrix.target }}
         MINIFY: "true"
-        EXTRA_FILES: "README.md LICENSE.txt"
+        EXTRA_FILES: "README.md LICENSE.txt CHANGELOG.md"
         UPLOAD_MODE: none
 
     - name: Upload artifacts
