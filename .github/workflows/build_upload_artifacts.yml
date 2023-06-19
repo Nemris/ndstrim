@@ -1,0 +1,32 @@
+name: Build and upload as artifacts
+
+on: workflow_dispatch
+
+jobs:
+  release:
+    name: Release ${{ matrix.target }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl, x86_64-apple-darwin]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Build release
+      id: build
+      uses: rust-build/rust-build.action@v1.4.3
+      with:
+        RUSTTARGET: ${{ matrix.target }}
+        MINIFY: "true"
+        EXTRA_FILES: "README.md LICENSE.txt"
+        UPLOAD_MODE: none
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release_assets
+        path: |
+          ${{ steps.build.outputs.BUILT_ARCHIVE }}
