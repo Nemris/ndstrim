@@ -69,6 +69,17 @@ cargo b --release
 
 -----
 
+## Detection as malware
+
+On Windows, it might happen that Defender quarantines the prebuilt .exe as a malware. Likewise,
+some VirusTotal engines may flag the binary, even if sandbox analysis shows that the file is clean.
+
+This is a false positive, most likely triggered by the use of UPX to minify the binary's size.
+If you don't trust the binary, however, you can always review the source and build `ndstrim` on
+your system by following the instructions above.
+
+-----
+
 ## Credits
 
 This program is based on an adaptation of the trimming algorithm included in [GodMode9][1].
